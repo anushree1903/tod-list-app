@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Form, Input, Button, Card, Typography } from "antd";
 import { useRouter } from "next/navigation";
+import { loginUser } from "../actions/actions"; // Adjust the path if necessary
 
 const { Title } = Typography;
 
@@ -12,20 +13,14 @@ const Login: React.FC = () => {
 
   const onFinish = async (values: any) => {
     setLoading(true);
-    // Add your API call here to handle login
-    // Example:
     try {
-      const response = await fetch("/api/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
-      });
-      if (response.ok) {
+      const response = await loginUser(values); // Call loginUser function from server actions
+
+      if (response.access_token) {
+        // Store token in localStorage or context as needed
+        localStorage.setItem("access_token", response.access_token);
         router.push("/");
       } else {
-        // Handle errors
         console.error("Login failed");
       }
     } catch (error) {
@@ -42,9 +37,9 @@ const Login: React.FC = () => {
       </Title>
       <Form layout="vertical" onFinish={onFinish}>
         <Form.Item
-          label="Email"
-          name="email"
-          rules={[{ required: true, message: "Please input your email!" }]}
+          label="Username"
+          name="username"
+          rules={[{ required: true, message: "Please input your username!" }]}
         >
           <Input />
         </Form.Item>

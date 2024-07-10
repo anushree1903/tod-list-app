@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Form, Input, Button, Card, Typography } from "antd";
 import { useRouter } from "next/navigation";
+import { registerUser } from "../actions/actions"; // Adjust the path if necessary
 
 const { Title } = Typography;
 
@@ -10,17 +11,13 @@ const Signup: React.FC = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
-  const onFinish = async (values: any) => {
+  const onFinish = async (values: { username: string; password: string }) => {
     setLoading(true);
     try {
-      const response = await fetch("/api/signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
-      });
-      if (response.ok) {
+      // Call registerUser function from server actions
+      const data = { ...values, role: "Admin" };
+      const response = await registerUser(data);
+      if (response) {
         router.push("/login");
       } else {
         console.error("Signup failed");
@@ -39,9 +36,9 @@ const Signup: React.FC = () => {
       </Title>
       <Form layout="vertical" onFinish={onFinish}>
         <Form.Item
-          label="Email"
-          name="email"
-          rules={[{ required: true, message: "Please input your email!" }]}
+          label="Username"
+          name="username"
+          rules={[{ required: true, message: "Please input your username!" }]}
         >
           <Input />
         </Form.Item>
